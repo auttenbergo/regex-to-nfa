@@ -10,8 +10,8 @@
 using namespace std;
 
 const char EPSILON = '-';
-const string TEST_INPUT_PATH = "Public tests/Public tests/P1/In (public)/";
-const string TEST_OUTPUT_PATH = "Public tests/Public tests/P1/Out (public)/";
+const string TEST_INPUT_PATH = "./Public tests/Public tests/P1/In (public)/";
+const string TEST_OUTPUT_PATH = "./Public tests/Public tests/P1/Out (public)/";
 
 template <typename Map>
 bool map_compare(Map const& lhs, Map const& rhs) {
@@ -652,96 +652,9 @@ void checkLecturerTests() {
 	cout << "Test 1 (END):" << endl;
 
 }
-string simulateNFA(NFA& nfa, string word) {
-
-	queue<State*> bfs;
-	bfs.push(nfa.states[0]);
-	string result = "";
-	int currentIndex = 0;
-
-	while (!bfs.empty() && currentIndex < word.size()) {
-		vector<State*> states;
-		while (!bfs.empty()) {
-			states.push_back(bfs.front());
-			bfs.pop();
-		}
-
-		bool wasInRecepient = false;
-		char symbol = word[currentIndex];
-		currentIndex++;
-		for (int i = 0; i < states.size(); i++) {
-			State* current = states[i];
-
-			vector<State*> transitions = current->transitions[symbol];
-			for (int j = 0; j < transitions.size(); j++) {
-				bfs.push(transitions[j]);
-				if (transitions[j]->isRecepient)
-					wasInRecepient = true;
-			}
-		}
-		if (wasInRecepient)
-			result += "Y";
-		else
-			result += "N";
-	}
-	for (; currentIndex < word.size(); currentIndex++) {
-		result += "N";
-	}
-	return result;
-}
-void checkLecturerTests2() {
-	cout << "Test 2 (BEGIN):" << endl;
-	const string TEST_INPUT_PATH_2 = "Public tests/P2/In (public)/";
-	const string TEST_OUTPUT_PATH_2 = "Public tests/P2/Out (public)/";
-	int passed = 0;
-	int failed = 0;
-	for (int test = 0; test < 20; test++) {
-		string inputFile = "in";
-		inputFile += (test / 10 == 0) ? "0" + to_string(test) : to_string(test);
-		inputFile += ".txt";
-		string outputFile = "out";
-		outputFile += (test / 10 == 0) ? "0" + to_string(test) : to_string(test);
-		outputFile += ".txt";
-		string regexFile = "reg";
-		regexFile += (test / 10 == 0) ? "0" + to_string(test) : to_string(test);
-		regexFile += ".txt";
-
-
-		ifstream outputStream;
-
-		outputStream.open(TEST_OUTPUT_PATH_2 + outputFile);
-		string expected; outputStream >> expected;
-		outputStream.close();
-
-
-		ifstream inputStream;
-
-		inputStream.open(TEST_INPUT_PATH_2 + inputFile);
-		string word; inputStream >> word;
-		inputStream.close();
-
-		ifstream regexStream;
-		regexStream.open(TEST_INPUT_PATH_2 + regexFile);
-		string regex; regexStream >> regex;
-		regexStream.close();
-
-		NFA answerNFA = convertRegexToNFA(regex, 0, regex.size(), getBracketPairs(regex));
-		string answer = simulateNFA(answerNFA, word);
-		if (answer != expected)
-			failed++;
-		else
-			passed++;
-
-	}
-	cout << "Passed: " << passed << endl;
-	cout << "Failed: " << failed << endl;
-	cout << "Test 2 (END):" << endl;
-
-}
 
 int main() {
 	//checkLecturerTests();
-	//checkLecturerTests2();
 	string regex; cin >> regex;
 	NFA nfa = convertRegexToNFA(regex, 0, regex.size(), getBracketPairs(regex));
 	printNFA(nfa);
